@@ -22,10 +22,10 @@ Não há grandes detalhes a serem explorados, a função apenas sorteia uma joga
 ## Teste
 
 <p align="center">
-
-![Partida no Lichess: [https://lichess.org/study/Nd5XNecb/UvlZPjvq#0](https://lichess.org/study/Nd5XNecb/UvlZPjvq#0)](https://media.giphy.com/media/1fl3uOHfyOsPnrxwTV/giphy.gif)
-
+<img src="https://media.giphy.com/media/1fl3uOHfyOsPnrxwTV/giphy.gif" />
 </p>    
+
+Partida no Lichess: [https://lichess.org/study/Nd5XNecb/UvlZPjvq#0](https://lichess.org/study/Nd5XNecb/UvlZPjvq#0)
 
 Código modificado: [bostjan-mejak-chess_0_random.py](code/bostjan-mejak-chess_0_random.py)
 
