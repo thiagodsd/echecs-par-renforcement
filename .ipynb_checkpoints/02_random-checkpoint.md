@@ -19,13 +19,13 @@ def engineTurn(self):
 
 Não há grandes detalhes a serem explorados, a função apenas sorteia uma jogada dentre todos os movimentos legais da posição.
 
-- - -
+## Teste
 
-# Partida
+<p align="center">
 
-![](https://media.giphy.com/media/1fl3uOHfyOsPnrxwTV/giphy.gif)
+![Partida no Lichess: [https://lichess.org/study/Nd5XNecb/UvlZPjvq#0](https://lichess.org/study/Nd5XNecb/UvlZPjvq#0)](https://media.giphy.com/media/1fl3uOHfyOsPnrxwTV/giphy.gif)
 
-Partida no Lichess: [https://lichess.org/study/Nd5XNecb/UvlZPjvq#0](https://lichess.org/study/Nd5XNecb/UvlZPjvq#0)
+</p>    
 
 Código modificado: [bostjan-mejak-chess_0_random.py](code/bostjan-mejak-chess_0_random.py)
 
