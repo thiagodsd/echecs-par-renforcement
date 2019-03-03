@@ -1,0 +1,13 @@
+[Event "test"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "user"]
+[Black "homemade engine"]
+[Result "1-0"]
+
+1. d4 Na6 2. Bf4 Rb8 3. e3 Nh6 4. Nf3 c6 5. Bxb8 e6 6. Bg3 Qf6 7. c3 Rg8 8.
+Nbd2 Nb4 9. a3 Nd3+ 10. Bxd3 Qxf3 11. gxf3 b5 12. Qc2 Bb7 13. Bxh7 Nf5 14. Bxg8
+a6 15. O-O-O Nh6 16. Bh7 Bc5 17. dxc5 Bc8 18. Bd6 Kd8 19. Qe4 f6 20. Rdg1 Ng8
+21. Rxg7 e5 22. Rxg8# 1-0
+
