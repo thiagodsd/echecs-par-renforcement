@@ -2,7 +2,11 @@
 
 Attempts to apply ideas learned on AI classes in the game of chess. Notebooks are essentially explorations of ideas and tools. Comments are mostly in Portuguese.
 
-<div style="width:100%;height:0;padding-bottom:77%;position:relative;"><iframe src="https://giphy.com/embed/4HkhNtsdIfu2hR3PYy" width="100%" height="100%" style="position:absolute" frameBorder="0" class="giphy-embed" allowFullScreen></iframe></div><p><a href="https://giphy.com/gifs/4HkhNtsdIfu2hR3PYy">via GIPHY</a></p>
+<div style="text-align: center;">
+
+![](img/imortal.png)
+
+</div>
 
 ## "External" Resources
 
