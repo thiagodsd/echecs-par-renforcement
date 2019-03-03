@@ -73,7 +73,10 @@ class MainWindow(QWidget):
                               exporter = chess.pgn.FileExporter(pgn)
                               self.game.accept(exporter)
                             
-                            self.engineTurn()
+                            try:
+                              self.engineTurn()
+                            except IndexError:
+                              pass
                         piece = None
                         coordinates = None
                     self.pieceToMove = [piece, coordinates]
