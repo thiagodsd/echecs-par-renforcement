@@ -217,8 +217,8 @@
     ],
     "location": {
       "address": "São Joaquim, São Paulo, Brazil",
-      "latitude": -23.5618725,
-      "longitude": -46.6408663
+      "latitude": -22.8,
+      "longitude": -47.766667
     },
     "title": "São Joaquim",
     "schedule": [
@@ -281,8 +281,8 @@
     ],
     "location": {
       "address": "São Bento, São Paulo, Brazil",
-      "latitude": -23.5443802,
-      "longitude": -46.6341235
+      "latitude": -23.4346555,
+      "longitude": -46.2494721
     },
     "title": "São Bento",
     "schedule": [
@@ -408,8 +408,8 @@
     ],
     "location": {
       "address": "Estação Santana - Rua Doutor César, Santana, Sao Paulo - São Paulo, Brazil",
-      "latitude": -23.502588,
-      "longitude": -46.6269405
+      "latitude": -23.5163291,
+      "longitude": -46.1900731
     },
     "title": "Santana",
     "schedule": [
