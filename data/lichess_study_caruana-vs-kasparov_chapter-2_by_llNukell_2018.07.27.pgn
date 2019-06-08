@@ -1,0 +1,12 @@
+[Event "Caruana Vs Kasparov: Chapter 2"]
+[Site "https://lichess.org/study/SDVRZOxT/PfqNATKw"]
+[Result "*"]
+[UTCDate "2018.07.27"]
+[UTCTime "23:19:38"]
+[Variant "Standard"]
+[ECO "A05"]
+[Opening "King's Indian Attack: Symmetrical Defense"]
+[Annotator "https://lichess.org/@/llNukell"]
+
+1. Nf3 { White: Caruana
+Black: Kasparov } 1... Nf6 2. g3 g6 3. Bg2 Bg7 4. c4 d6 5. b3 O-O 6. O-O e5 7. Bb2 c5 8. e3 Nc6 9. Nc3 Bf5 10. d4 e4 11. Ne1 Re8 12. Nc2 h5 13. Qd2 h4? 14. Ba3 b6 15. Rfd1 Bg4 16. Rdc1 Qd7 17. b4 Qf5 18. Bb2 Rad8 19. Nb5 Bf3 20. d5 Ne5 21. Bxe5 Rxe5 22. Ne1 hxg3 23. fxg3 Bh6 24. Rab1 Kg7 25. Rb3 Qh5 26. h3 Nh7 27. g4 Bxg4 28. hxg4 Qxg4 29. Qd1 Qg3 30. Qe2 Ng5 31. Kh1 Rh8 32. Nxd6 Kg8 33. bxc5 Bf8+ 34. Kg1 Nh3+ 35. Kf1 Bxd6 36. cxd6 Rf5+ 37. Nf3 Rxf3+ { White Resigns } *
