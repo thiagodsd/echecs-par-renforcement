@@ -172,3 +172,9 @@ Thumbs.db
 *.csv
 *.json
 *.p
+*.wandb
+*.pt
+*.safetensors
+*.bin
+*.pth
+fine-tuning/wandb/latest-run
