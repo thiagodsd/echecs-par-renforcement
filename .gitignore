@@ -163,3 +163,12 @@ Thumbs.db
 
 
 # End of https://www.toptal.com/developers/gitignore/api/python,jupyternotebooks
+.env
+*.svg
+*.png
+*.pgn
+*.ods
+*.txt
+*.csv
+*.json
+*.p
