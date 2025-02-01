@@ -178,3 +178,4 @@ Thumbs.db
 *.bin
 *.pth
 fine-tuning/wandb/latest-run
+*.docx
