@@ -82,9 +82,10 @@ def setup_model_and_tokenizer(model_name="microsoft/phi-2"):
         load_in_4bit=True,
         bnb_4bit_quant_type="nf4",
         bnb_4bit_compute_dtype=torch.float16,
-        bnb_4bit_use_double_quant=True  # Enable double quantization
+        bnb_4bit_use_double_quant=True
     )
     
+    # Load tokenizer first
     tokenizer = AutoTokenizer.from_pretrained(
         model_name,
         trust_remote_code=True,
@@ -93,12 +94,14 @@ def setup_model_and_tokenizer(model_name="microsoft/phi-2"):
     )
     
     # Configure special tokens
-    tokenizer.pad_token = tokenizer.eos_token
-    tokenizer.pad_token_id = tokenizer.eos_token_id
-    special_tokens = {"additional_special_tokens": ["<|im_start|>", "<|im_end|>"]}
+    special_tokens = {
+        "pad_token": "<|pad|>",
+        "eos_token": "<|endoftext|>",
+        "additional_special_tokens": ["<|im_start|>", "<|im_end|>"]
+    }
     num_added_tokens = tokenizer.add_special_tokens(special_tokens)
     
-    # Load model with memory optimizations
+    # Load model
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
         quantization_config=quant_config,
@@ -108,11 +111,11 @@ def setup_model_and_tokenizer(model_name="microsoft/phi-2"):
         low_cpu_mem_usage=True
     )
     
+    # Prepare model
     model = prepare_model_for_kbit_training(model)
     model.resize_token_embeddings(len(tokenizer))
     model.config.use_cache = False
     model.config.pad_token_id = tokenizer.pad_token_id
-    model.config.eos_token_id = tokenizer.eos_token_id
     
     return model, tokenizer
 
@@ -187,18 +190,20 @@ def main():
     trainer = setup_training(model, train_test_split)
     
     try:
-        torch.cuda.empty_cache()
         trainer.train()
         
-        # Save in safetensors format with memory optimization
-        trainer.model.save_pretrained(
-            "./phi2-finetuned-lora",
-            safe_serialization=True,
-            max_shard_size="200MB"
-        )
+        # Save the model and tokenizer
+        output_dir = "./phi2-finetuned-lora"
         
-        # Save tokenizer
-        tokenizer.save_pretrained("./phi2-finetuned-lora")
+        # Save the adapter
+        trainer.model.save_pretrained(output_dir)
+        
+        # Save the tokenizer configuration
+        tokenizer.save_pretrained(output_dir)
+        
+        # Save the model configuration
+        model.config.save_pretrained(output_dir)
+        
     except Exception as e:
         print(f"Training error: {str(e)}")
         raise

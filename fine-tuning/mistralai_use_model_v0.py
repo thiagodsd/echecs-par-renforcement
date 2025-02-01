@@ -4,6 +4,12 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 from peft import PeftModel
 import textwrap
 import os
+import dotenv
+
+dotenv.load_dotenv("../.env", override=True)
+
+print(os.environ["HF_HOME"])
+print(os.environ["TRANSFORMERS_CACHE"])
 
 def load_fine_tuned_model(base_model_name="microsoft/phi-2", adapter_path="./phi2-finetuned-lora"):
     """Load the fine-tuned model and tokenizer with proper dtype handling."""
