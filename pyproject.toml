@@ -55,6 +55,7 @@ flash-attn = "^2.7.4.post1"
 wandb = "^0.19.5"
 absl-py = "^2.1.0"
 nltk = "^3.9.1"
+pypdf2 = "^3.0.1"
 
 
 [build-system]

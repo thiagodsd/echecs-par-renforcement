@@ -1,3 +1,4 @@
+# /home/dusoudeth/Documentos/github/echecs-par-renforcement/fine-tuning/phi2_use_model_v1.py
 import torch
 import gc
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig

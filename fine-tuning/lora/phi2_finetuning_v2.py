@@ -1,13 +1,14 @@
+# /home/dusoudeth/Documentos/github/echecs-par-renforcement/fine-tuning/phi2_finetuning_v2.py
 import os
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import Dict, List  # noqa: F401
 
 import torch
-from datasets import Dataset, load_dataset
+from datasets import Dataset, load_dataset  # noqa: F401
 from peft import (
     LoraConfig,
-    PeftConfig,
-    PeftModel,
+    PeftConfig,  # noqa: F401
+    PeftModel,  # noqa: F401
     get_peft_model,
     prepare_model_for_kbit_training
 )
@@ -27,8 +28,8 @@ dotenv.load_dotenv("../.env", override=True)
 print(os.environ["HF_HOME"])
 print(os.environ["TRANSFORMERS_CACHE"])
 
-# export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True,max_split_size_mb:512   
-os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+# export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:128,expandable_segments:True
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:128,expandable_segments:True"
 
 torch.cuda.is_available()
 torch.cuda.current_device()
@@ -39,95 +40,104 @@ torch.cuda.memory_summary()
 
 @dataclass
 class TrainingConfig:
-    # Model configuration
+    #
     base_model_name: str = "microsoft/phi-2"
     model_max_length: int = 1024
-    # LoRA configuration
-    lora_r: int = 8
+    #
+    lora_r: int = 4
     lora_alpha: int = 16
-    lora_dropout: float = 0.1
-    # Training configuration
-    per_device_train_batch_size: int = 1 # per_device_train_batch_size: int = 2
-    gradient_accumulation_steps: int = 4
-    warmup_steps: int = 50 # warmup_steps: int = 100
-    max_steps: int = 1000
-    learning_rate: float = 2e-4
+    lora_dropout: float = 0.05
+    #
+    per_device_train_batch_size: int = 1
+    gradient_accumulation_steps: int = 8
+    warmup_steps: int = 2
+    max_steps: int = 10
+    learning_rate: float = 1e-5
     output_dir: str = "output"
     logging_steps: int = 10
     save_steps: int = 200
-    # Data processing
-    chunk_size: int = 256 # chunk_size: int = 512
-    chunk_overlap: int = 25 # chunk_overlap: int = 50
+    #
+    chunk_size: int = 256
+    chunk_overlap: int = 25
+
 
 def prepare_model():
     """
-    Initialize and prepare the Phi-2 model with 4-bit quantization and LoRA.
+    `todo`
     """
-    # Configure 4-bit quantization
     bnb_config = BitsAndBytesConfig(
         load_in_4bit = True,
         bnb_4bit_use_double_quant = True,
         bnb_4bit_quant_type = "nf4",
-        bnb_4bit_compute_dtype = torch.bfloat16
+        bnb_4bit_compute_dtype = torch.float16,
     )
-    
-    # Load base model with quantization
+    # loading the model
     model = AutoModelForCausalLM.from_pretrained(
         TrainingConfig.base_model_name,
         quantization_config = bnb_config,
         device_map = "auto",
-        trust_remote_code = True
+        trust_remote_code = True,
+        torch_dtype = torch.float16,
+        low_cpu_mem_usage = True
     )
-    
-    # Load tokenizer
+    # loading the tokenizer
     tokenizer = AutoTokenizer.from_pretrained(
         TrainingConfig.base_model_name,
-        model_max_length=TrainingConfig.model_max_length,
-        padding_side="right",
-        trust_remote_code=True
+        model_max_length = TrainingConfig.model_max_length,
+        padding_side = "right",
+        trust_remote_code = True
     )
     tokenizer.pad_token = tokenizer.eos_token
-    
-    # Prepare model for k-bit training
+    # preparing the model for kbit training
     model = prepare_model_for_kbit_training(model)
-    
-    # Configure LoRA
+    # lora configuration
     lora_config = LoraConfig(
-        r=TrainingConfig.lora_r,
-        lora_alpha=TrainingConfig.lora_alpha,
-        target_modules=["q_proj", "k_proj", "v_proj", "o_proj"],  # Phi-2 specific attention layers
-        lora_dropout=TrainingConfig.lora_dropout,
-        bias="none",
-        task_type="CAUSAL_LM"
+        r = TrainingConfig.lora_r,
+        lora_alpha = TrainingConfig.lora_alpha,
+        target_modules = ["q_proj", "v_proj"],
+        lora_dropout = TrainingConfig.lora_dropout,
+        bias = "none",
+        task_type = "CAUSAL_LM"
     )
-    
-    # Apply LoRA
     model = get_peft_model(model, lora_config)
-    
     return model, tokenizer
 
 
 def process_documents(file_paths: List[str], tokenizer) -> Dataset:
     """
-    Process and chunk DOCX documents into a format suitable for training.
+    `todo`
     """
+    # function definitions
     def chunk_text(text: str) -> List[str]:
-        chunks = []
+        """
+        here we chunk the text
+        """
+        chunks = list()
         for i in range(0, len(text), TrainingConfig.chunk_size - TrainingConfig.chunk_overlap):
             chunk = text[i:i + TrainingConfig.chunk_size]
-            if len(chunk) >= TrainingConfig.chunk_size // 2:  # Only keep chunks of reasonable size
+            if len(chunk) >= TrainingConfig.chunk_size // 2:
                 chunks.append(chunk)
         return chunks
-
     def extract_text_from_docx(file_path: str) -> str:
+        """
+        here we read the text from a docx file
+        """
         doc = Document(file_path)
-        full_text = []
+        full_text = list()
         for paragraph in doc.paragraphs:
-            if paragraph.text.strip():  # Skip empty paragraphs
+            if paragraph.text.strip():
                 full_text.append(paragraph.text)
         return "\n".join(full_text)
-    
-    processed_data = []
+    def tokenize_function(examples):
+        return tokenizer(
+            examples["text"],
+            truncation = True,
+            max_length = TrainingConfig.model_max_length,
+            padding = "max_length",
+            return_tensors = None
+        )
+    # processing the documents
+    processed_data = list()
     for file_path in file_paths:
         try:
             if file_path.endswith('.docx'):
@@ -138,31 +148,19 @@ def process_documents(file_paths: List[str], tokenizer) -> Dataset:
             
             chunks = chunk_text(text)
             processed_data.extend([{"text": chunk} for chunk in chunks])
-            print(f"Successfully processed {file_path}")
+            print(f"Successfully processed {file_path}".lower())
         except Exception as e:
-            print(f"Error processing {file_path}: {str(e)}")
-    
-    # Create dataset from processed data
+            print(f"Error processing {file_path}: {str(e)}".lower())
+    # generating the dataset from the processed data
     dataset = Dataset.from_list(processed_data)
-    
-    # Tokenize the dataset
-    def tokenize_function(examples):
-        return tokenizer(
-            examples["text"],
-            truncation=True,
-            max_length=TrainingConfig.model_max_length,
-            padding="max_length",
-            return_tensors=None  # Return lists instead of tensors
-        )
-    
-    # Tokenize the dataset
+    # tokenizing the dataset
     tokenized_dataset = dataset.map(
         tokenize_function,
-        batched=True,
-        remove_columns=dataset.column_names
+        batched = True,
+        remove_columns = dataset.column_names
     )
-    
     return tokenized_dataset
+
 
 def train_model(
     model,
@@ -171,9 +169,9 @@ def train_model(
     output_dir: str = "output"
 ):
     """
-    Train the model using the prepared dataset.
+    `todo`
     """
-    # Prepare training arguments
+    # preparing the training arguments
     training_args = TrainingArguments(
         output_dir=output_dir,
         per_device_train_batch_size=TrainingConfig.per_device_train_batch_size,
@@ -181,63 +179,61 @@ def train_model(
         warmup_steps=TrainingConfig.warmup_steps,
         max_steps=TrainingConfig.max_steps,
         learning_rate=TrainingConfig.learning_rate,
-        fp16=True,
+        fp16=True,  # Enable fp16 training
         logging_steps=TrainingConfig.logging_steps,
         save_strategy="steps",
         save_steps=TrainingConfig.save_steps,
         ddp_find_unused_parameters=False,
-        remove_unused_columns=True,  # This is the default, but let's be explicit
-        optim="adamw_torch",
+        remove_unused_columns=True,
+        optim="paged_adamw_8bit",  # Changed to paged_adamw_8bit
         gradient_checkpointing=True,
-        # group_by_length=True,  # Group similar length sequences
-        # dataloader_num_workers=8,  # Adjust based on your CPU cores
-        # dataloader_pin_memory=True,
-        evaluation_strategy="no",  # Since we're not doing evaluation
-        report_to=["wandb"],  # Keep only wandb for logging
-        # torch_compile=False,  # Disable torch compilation for faster startup
-
+        evaluation_strategy="no",
+        report_to=["none"],  # Disabled wandb reporting
+        max_grad_norm=0.3,  # Added from v1
+        warmup_ratio=0.03,  # Added from v1
     )
-    
-    # Prepare data collator
+    # preparing the data collator
     data_collator = DataCollatorForLanguageModeling(
         tokenizer=tokenizer,
         mlm=False
     )
-    
-    # Initialize trainer
+    # preparing the trainer
     trainer = Trainer(
         model=model,
         train_dataset=train_dataset,
         args=training_args,
         data_collator=data_collator,
     )
-    
-    # Train
+    # fine-tuning the model
     trainer.train()
-    
-    # Save the final model
+    # saving the model
     trainer.save_model(output_dir)
 
+
 def main():
-    # Set up device
+    # setting up the device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"Using device: {device}")
-    
-    # Prepare model and tokenizer
+    print(f"Using device: {device}".lower())
+    # model & tokenizer
     model, tokenizer = prepare_model()
-    print("Model and tokenizer prepared")
-    
-    # Process your documents - replace with your file paths
+    print("Model and tokenizer prepared".lower())
+    # documents
     file_paths = [
         "/home/dusoudeth/Documentos/github/echecs-par-renforcement/data/docx/isadora_urel_DO_PLANO_DE_CONVIÊNCIA_IDEAL.docx",
         "/home/dusoudeth/Documentos/github/echecs-par-renforcement/data/docx/isadora_urel_tese_doutorado.docx",
-    ]  # Add your document paths here
-    train_dataset = process_documents(file_paths, tokenizer)
-    print(f"Processed {len(train_dataset)} training examples")
-    
-    # Train the model
-    train_model(model, tokenizer, train_dataset)
-    print("Training completed")
+    ]
+    train_dataset = process_documents(
+        file_paths, 
+        tokenizer
+    )
+    print(f"Processed {len(train_dataset)} training examples".lower())
+    # training
+    train_model(
+        model,
+        tokenizer,
+        train_dataset
+    )
+    print("Training completed".lower())
 
 if __name__ == "__main__":
     main()
