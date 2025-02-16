@@ -179,3 +179,4 @@ Thumbs.db
 *.pth
 fine-tuning/wandb/latest-run
 *.docx
+!deprecated/img/imortal.png
