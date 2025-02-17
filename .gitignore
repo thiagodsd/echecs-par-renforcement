@@ -180,3 +180,4 @@ Thumbs.db
 fine-tuning/wandb/latest-run
 *.docx
 !deprecated/img/imortal.png
+langgraph/credentials.env
