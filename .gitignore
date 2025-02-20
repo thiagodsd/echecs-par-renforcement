@@ -182,5 +182,4 @@ fine-tuning/wandb/latest-run
 !deprecated/img/imortal.png
 langgraph/credentials.env
 llm-langgraph/credentials.env
-llm-langgraph/warming_03/lab.py
 llm-langgraph/warming_01/lab.ipynb
